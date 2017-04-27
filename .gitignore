@@ -1,0 +1,5 @@
+build
+
+# Qt cache
+CMakeLists.txt.user
+CMakeLists.txt.user.*
