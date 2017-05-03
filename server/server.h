@@ -9,6 +9,7 @@ public:
     CServer() = delete;
     CServer(boost::asio::io_service& io_service, const uint16_t port);
 private:
+    void Create(const uint16_t port);
     void DoAccept();
 private:
     boost::asio::ip::tcp::acceptor m_acceptor;
