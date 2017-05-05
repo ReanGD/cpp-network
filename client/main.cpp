@@ -5,7 +5,10 @@
 
 using boost::asio::ip::tcp;
 
-enum { max_length = 1024 };
+struct Header
+{
+    uint64_t lenght;
+};
 
 int main(int argc, char* argv[])
 {
@@ -15,16 +18,16 @@ int main(int argc, char* argv[])
 
     tcp::socket s(io_service);
     tcp::resolver resolver(io_service);
-    boost::asio::connect(s, resolver.resolve({"127.0.0.1", "5555"}));
+    boost::asio::connect(s, resolver.resolve({"192.168.1.2", "5555"}));
 
-    std::string msg = "Hello";
-    boost::asio::write(s, boost::asio::buffer(msg));
-
-    char reply[max_length];
-    size_t reply_length = boost::asio::read(s, boost::asio::buffer(reply, msg.size()));
-    std::cout << "Reply is: ";
-    std::cout.write(reply, reply_length);
-    std::cout << "\n";
+    std::string msg(1024 * 1024, 'c');
+    for(uint32_t i=0; i!=10; ++i)
+    {
+        std::cout << i << std::endl;
+        Header header[1] = {Header{msg.size()}};
+        boost::asio::write(s, boost::asio::buffer(header));
+        boost::asio::write(s, boost::asio::buffer(msg));
+    }
   }
   catch (std::exception& e)
   {

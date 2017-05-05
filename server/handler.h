@@ -6,18 +6,23 @@
 class CHandler
         : public std::enable_shared_from_this<CHandler>
 {
+    struct Header
+    {
+        uint64_t lenght;
+    };
+
 public:
     CHandler() = delete;
     CHandler(boost::asio::ip::tcp::socket socket);
 public:
     void Start();
 private:
-    void DoRead();
-    void DoWrite(const std::size_t length);
+    void DoReadHeader();
+    void DoReadData();
 private:
     boost::asio::ip::tcp::socket m_socket;
-    enum { max_length = 1024 };
-    char m_data[max_length];
+    Header m_header[1];
+    std::vector<char> m_data;
 };
 
 #endif // HANDLER_H
