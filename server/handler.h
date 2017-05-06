@@ -3,6 +3,15 @@
 
 #include <boost/asio.hpp>
 
+struct Package
+{
+    struct Header
+    {
+        uint64_t lenght;
+    } m_header[1];
+    std::vector<char> m_data;
+};
+
 class CHandler
         : public std::enable_shared_from_this<CHandler>
 {
@@ -19,10 +28,11 @@ public:
 private:
     void DoReadHeader();
     void DoReadData();
+    void DoProcess();
+    void DoRead();
 private:
     boost::asio::ip::tcp::socket m_socket;
-    Header m_header[1];
-    std::vector<char> m_data;
+    Package m_package;
 };
 
 #endif // HANDLER_H

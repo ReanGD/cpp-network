@@ -54,6 +54,10 @@ void CServer::DoAccept()
     {
         if (!ec)
         {
+            auto remote = m_socket.remote_endpoint();
+            BOOST_LOG_TRIVIAL(info) << "Accepted client from "
+                                    << remote.address().to_string()
+                                    << ":" << remote.port();
             std::make_shared<CHandler>(std::move(m_socket))->Start();
         }
 

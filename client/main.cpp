@@ -20,9 +20,10 @@ int main(int argc, char* argv[])
     tcp::resolver resolver(io_service);
     boost::asio::connect(s, resolver.resolve({"192.168.1.2", "5555"}));
 
-    std::string msg(1024 * 1024, 'c');
     for(uint32_t i=0; i!=10; ++i)
     {
+        std::string msg("hello");
+        msg += ('a' + i);
         std::cout << i << std::endl;
         Header header[1] = {Header{msg.size()}};
         boost::asio::write(s, boost::asio::buffer(header));
