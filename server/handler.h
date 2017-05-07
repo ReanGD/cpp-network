@@ -3,23 +3,15 @@
 
 #include <boost/asio.hpp>
 
-struct Package
-{
-    struct Header
-    {
+struct Package {
+    struct Header {
         uint64_t lenght;
     } m_header[1];
     std::vector<char> m_data;
 };
 
 class CHandler
-        : public std::enable_shared_from_this<CHandler>
-{
-    struct Header
-    {
-        uint64_t lenght;
-    };
-
+        : public std::enable_shared_from_this<CHandler> {
 public:
     CHandler() = delete;
     CHandler(boost::asio::ip::tcp::socket socket);

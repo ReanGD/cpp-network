@@ -3,8 +3,7 @@
 
 #include <boost/asio.hpp>
 
-class CServer
-{
+class CServer {
 public:
     CServer() = delete;
     CServer(boost::asio::io_service& io_service, const uint16_t port);
