@@ -2,13 +2,8 @@
 #define HANDLER_H
 
 #include <boost/asio.hpp>
+#include "package_parser.h"
 
-struct Package {
-    struct Header {
-        uint64_t lenght;
-    } m_header[1];
-    std::vector<char> m_data;
-};
 
 class CHandler
         : public std::enable_shared_from_this<CHandler> {
@@ -18,13 +13,11 @@ public:
 public:
     void Start();
 private:
-    void DoReadHeader();
-    void DoReadData();
-    void DoProcess();
     void DoRead();
 private:
     boost::asio::ip::tcp::socket m_socket;
-    Package m_package;
+    std::array<uint8_t, 256 * 1024> m_buffer;
+    PackageParser m_parser;
 };
 
 #endif // HANDLER_H
