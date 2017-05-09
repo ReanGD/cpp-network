@@ -1,5 +1,4 @@
-#ifndef PARSER_H
-#define PARSER_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -35,5 +34,3 @@ private:
     std::shared_ptr<PackageBody> m_body;
     size_t m_bodyFilled = 0;
 };
-
-#endif // PARSER_H

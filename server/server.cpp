@@ -3,23 +3,24 @@
 #include <boost/log/trivial.hpp>
 #include <boost/thread/thread.hpp>
 
-#include "handler.h"
+#include "connection.h"
 
 using boost::asio::ip::tcp;
 
 static const uint8_t BIND_RETRY_COUNT = 5;
 static const boost::posix_time::milliseconds BIND_RETRY_SLEEP_BASE(1000);
 
-CServer::CServer(boost::asio::io_service &io_service, const uint16_t port)
+Server::Server(boost::asio::io_service &io_service, const uint16_t port)
     : m_acceptor(io_service)
     , m_socket(io_service) {
+
     BOOST_LOG_TRIVIAL(info) << "Starting server on address 0.0.0.0:" << port;
 
-    Create(port);
-    DoAccept();
+    create(port);
+    doAccept();
 }
 
-void CServer::Create(const uint16_t port) {
+void Server::create(const uint16_t port) {
     using namespace boost::asio;
 
     boost::system::error_code ec;
@@ -43,7 +44,7 @@ void CServer::Create(const uint16_t port) {
     detail::throw_error(ec, "listen");
 }
 
-void CServer::DoAccept() {
+void Server::doAccept() {
     BOOST_LOG_TRIVIAL(debug) << "wait accept";
     m_acceptor.async_accept(m_socket,
                             [this](boost::system::error_code ec) {
@@ -52,9 +53,9 @@ void CServer::DoAccept() {
             BOOST_LOG_TRIVIAL(info) << "Accepted client from "
                                     << remote.address().to_string()
                                     << ":" << remote.port();
-            std::make_shared<CHandler>(std::move(m_socket))->Start();
+            std::make_shared<Connection>(std::move(m_socket))->start();
         }
 
-        DoAccept();
+        doAccept();
     });
 }

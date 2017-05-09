@@ -4,7 +4,7 @@
 
 #include "server.h"
 
-void InitLog() {
+void initLog() {
     namespace expr = boost::log::expressions;
     auto fmt = expr::stream << "<" << boost::log::trivial::severity << "> " << expr::smessage;
     boost::log::add_console_log(std::clog, boost::log::keywords::format=fmt);
@@ -13,10 +13,10 @@ void InitLog() {
 
 int main(int /*argc*/, char** /*argv[]*/) {
     try {
-        InitLog();
-        boost::asio::io_service io_service;
-        CServer s(io_service, 5555);
-        io_service.run();
+        initLog();
+        boost::asio::io_service ioService;
+        Server s(ioService, 5555);
+        ioService.run();
     } catch (boost::system::system_error& e) {
         BOOST_LOG_TRIVIAL(fatal) << e.what();
     } catch (std::exception& e) {

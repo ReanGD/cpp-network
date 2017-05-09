@@ -1,18 +1,18 @@
-#include "handler.h"
+#include "connection.h"
 #include <boost/log/trivial.hpp>
 
 
 using boost::asio::ip::tcp;
 
-CHandler::CHandler(tcp::socket socket)
+Connection::Connection(tcp::socket socket)
     : m_socket(std::move(socket)) {
 }
 
-void CHandler::Start() {
-    DoRead();
+void Connection::start() {
+    doRead();
 }
 
-void CHandler::DoRead() {
+void Connection::doRead() {
     auto self(shared_from_this());
 
     m_socket.async_read_some(boost::asio::buffer(m_buffer),
@@ -26,7 +26,7 @@ void CHandler::DoRead() {
                 std::string msg(package->m_data.begin(), package->m_data.end());
                 BOOST_LOG_TRIVIAL(info) << "Message: \"" << msg << "\"";
             }
-            DoRead();
+            doRead();
         }
     });
 }

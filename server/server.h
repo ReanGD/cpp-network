@@ -1,18 +1,15 @@
-#ifndef SERVER_H
-#define SERVER_H
+#pragma once
 
 #include <boost/asio.hpp>
 
-class CServer {
+class Server {
 public:
-    CServer() = delete;
-    CServer(boost::asio::io_service& io_service, const uint16_t port);
+    Server() = delete;
+    Server(boost::asio::io_service& io_service, const uint16_t port);
 private:
-    void Create(const uint16_t port);
-    void DoAccept();
+    void create(const uint16_t port);
+    void doAccept();
 private:
     boost::asio::ip::tcp::acceptor m_acceptor;
     boost::asio::ip::tcp::socket m_socket;
 };
-
-#endif // SERVER_H
