@@ -24,6 +24,8 @@ list(REMOVE_ITEM SOURCE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/main_server.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/main_client.cpp")
 
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src")
+
 add_library("${PROJECT_NAME}" STATIC ${SOURCE_FILES})
 set(LIBS "${PROJECT_NAME}" pthread ${Boost_LIBRARIES})
 

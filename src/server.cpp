@@ -1,9 +1,9 @@
 #include "server.h"
 
-#include <boost/log/trivial.hpp>
 #include <boost/thread/thread.hpp>
 
 #include "connection.h"
+#include "utils/logger.h"
 
 using boost::asio::ip::tcp;
 
@@ -14,7 +14,7 @@ Server::Server(boost::asio::io_service &io_service, const uint16_t port)
     : m_acceptor(io_service)
     , m_socket(io_service) {
 
-    BOOST_LOG_TRIVIAL(info) << "Starting server on address 0.0.0.0:" << port;
+    INFO("Starting server on address 0.0.0.0:" << port);
 
     create(port);
     doAccept();
@@ -45,14 +45,13 @@ void Server::create(const uint16_t port) {
 }
 
 void Server::doAccept() {
-    BOOST_LOG_TRIVIAL(debug) << "wait accept";
+    DEBUG("wait accept");
     m_acceptor.async_accept(m_socket,
                             [this](boost::system::error_code ec) {
         if (!ec) {
             auto remote = m_socket.remote_endpoint();
-            BOOST_LOG_TRIVIAL(info) << "Accepted client from "
-                                    << remote.address().to_string()
-                                    << ":" << remote.port();
+            INFO("Accepted client from "
+                 << remote.address().to_string() << ":" << remote.port());
             std::make_shared<Connection>(std::move(m_socket))->start();
         }
 
