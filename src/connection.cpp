@@ -9,10 +9,6 @@ Connection::Connection(tcp::socket socket)
     : m_socket(std::move(socket)) {
 }
 
-void Connection::start() {
-    doRead();
-}
-
 void Connection::doRead() {
     auto self(shared_from_this());
 

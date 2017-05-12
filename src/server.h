@@ -1,13 +1,21 @@
 #pragma once
 
-#include <boost/asio.hpp>
+#include "connection.h"
 
-class Server {
+
+class Server
+        : public std::enable_shared_from_this<Server> {
 public:
-    Server() = delete;
-    Server(boost::asio::io_service& io_service, const uint16_t port);
+    using OnConnect = std::function<void (ConnectionPtr)>;
 private:
-    void create(const uint16_t port);
+    Server() = delete;
+    Server(boost::asio::io_service& io_service);
+public:
+    static std::shared_ptr<Server> create(boost::asio::io_service& io_service);
+
+    void start(const uint16_t port);
+    void connect(const std::string& host, const uint16_t port, const OnConnect& onConnect);
+private:    
     void doAccept();
 private:
     boost::asio::ip::tcp::acceptor m_acceptor;

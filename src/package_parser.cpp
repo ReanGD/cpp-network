@@ -1,7 +1,7 @@
 #include "package_parser.h"
 
 
-std::shared_ptr<PackageBody> PackageParser::parse(const uint8_t *buffer, const size_t lenght) {
+PackageBodyPtr PackageParser::parse(const uint8_t *buffer, const size_t lenght) {
     const uint8_t *read_ptr = buffer + m_offset;
     size_t lenght_ptr = lenght - m_offset;
 
@@ -13,7 +13,7 @@ std::shared_ptr<PackageBody> PackageParser::parse(const uint8_t *buffer, const s
         if (need > lenght_ptr) {
             m_offset = 0;
             m_headerFilled += lenght_ptr;
-            return std::shared_ptr<PackageBody>();
+            return PackageBodyPtr();
         }
 
         m_headerFilled = 0;
@@ -31,7 +31,7 @@ std::shared_ptr<PackageBody> PackageParser::parse(const uint8_t *buffer, const s
         if (need > lenght_ptr) {
             m_offset = 0;
             m_bodyFilled += lenght_ptr;
-            return std::shared_ptr<PackageBody>();
+            return PackageBodyPtr();
         }
 
         m_bodyFilled = 0;
@@ -40,5 +40,5 @@ std::shared_ptr<PackageBody> PackageParser::parse(const uint8_t *buffer, const s
         return m_body;
     }
 
-    return std::shared_ptr<PackageBody>();
+    return PackageBodyPtr();
 }
