@@ -9,12 +9,13 @@ using boost::asio::ip::tcp;
 
 static const uint8_t BIND_RETRY_COUNT = 5;
 static const boost::posix_time::milliseconds BIND_RETRY_SLEEP_BASE(1000);
+static const std::string CLASS("Server: ");
 
 Server::Server(boost::asio::io_service &io_service, const uint16_t port)
     : m_acceptor(io_service)
     , m_socket(io_service) {
 
-    INFO("Starting server on address 0.0.0.0:" << port);
+    INFO(CLASS << "Starting server on address 0.0.0.0:" << port);
 
     create(port);
     doAccept();
@@ -45,13 +46,14 @@ void Server::create(const uint16_t port) {
 }
 
 void Server::doAccept() {
-    DEBUG("wait accept");
+    DEBUG(CLASS << "Wait accept");
     m_acceptor.async_accept(m_socket,
                             [this](boost::system::error_code ec) {
-        if (!ec) {
+        if (ec) {
+            ERROR(CLASS << "Error accept = " << BOOST_ERROR(ec));
+        } else {
             auto remote = m_socket.remote_endpoint();
-            INFO("Accepted client from "
-                 << remote.address().to_string() << ":" << remote.port());
+            INFO(CLASS << "Accepted client from " << remote.address().to_string() << ":" << remote.port());
             std::make_shared<Connection>(std::move(m_socket))->start();
         }
 

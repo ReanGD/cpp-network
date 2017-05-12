@@ -9,3 +9,6 @@ void initLogger();
 #define WARNING(msg) BOOST_LOG_TRIVIAL(warning) << msg
 #define ERROR(msg) BOOST_LOG_TRIVIAL(error) << msg
 #define FATAL(msg) BOOST_LOG_TRIVIAL(fatal) << msg
+
+#define BOOST_ERROR(ec) (ec).message()
+
