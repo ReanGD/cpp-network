@@ -6,7 +6,7 @@
 class Server
         : public std::enable_shared_from_this<Server> {
 public:
-    using OnConnect = std::function<void (ConnectionPtr)>;
+    using OnConnect = std::function<void (const boost::system::error_code&, ConnectionPtr)>;
 private:
     Server() = delete;
     Server(boost::asio::io_service& io_service);

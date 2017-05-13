@@ -2,14 +2,16 @@
 #include "utils/logger.h"
 
 
-void onConnect(ConnectionPtr connection) {
+void onConnect(const boost::system::error_code& ec, ConnectionPtr connection) {
+    if(ec) {
+        return;
+    }
+
     for (uint32_t i=0; i!=10; ++i) {
         std::string msg("hello");
         msg += ('a' + i);
         DEBUG(i);
-        PackageHeader header[1] = {PackageHeader{msg.size()}};
-        boost::asio::write(connection->m_socket, boost::asio::buffer(header));
-        boost::asio::write(connection->m_socket, boost::asio::buffer(msg));
+        connection->write(std::make_shared<PackageBody>(msg));
     }
 }
 

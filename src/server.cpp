@@ -55,12 +55,14 @@ void Server::connect(const std::string& host, const uint16_t port, const OnConne
     tcp::resolver resolver(m_socket.get_io_service());
     tcp::resolver::iterator it = resolver.resolve({host, std::to_string(port)});
     async_connect(m_socket, it,
-                  [this, self, onConnect](const boost::system::error_code& ec, tcp::resolver::iterator) {
+                  [this, self, onConnect, host, port](const boost::system::error_code& ec, tcp::resolver::iterator) {
         if (ec) {
-            // TODO
-            ERROR(CLASS << "Error connect = " << BOOST_ERROR(ec));
+            ERROR(CLASS << "Error connected to address " << host << ":" << port << ". Error message = " << BOOST_ERROR(ec));
+            onConnect(ec, std::shared_ptr<Connection>());
         } else {
-            onConnect(std::make_shared<Connection>(std::move(m_socket)));
+            auto remote = m_socket.remote_endpoint();
+            INFO(CLASS << "Success connected to address " << remote.address().to_string() << ":" << remote.port());
+            onConnect(ec, std::make_shared<Connection>(std::move(m_socket)));
         }
     });
 }
@@ -76,7 +78,7 @@ void Server::doAccept() {
         } else {
             auto remote = m_socket.remote_endpoint();
             INFO(CLASS << "Accepted client from " << remote.address().to_string() << ":" << remote.port());
-            std::make_shared<Connection>(std::move(m_socket))->doRead();
+            std::make_shared<Connection>(std::move(m_socket))->read();
         }
 
         doAccept();

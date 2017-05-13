@@ -8,7 +8,7 @@ PackageBodyPtr PackageParser::parse(const uint8_t *buffer, const size_t lenght) 
     if (m_state == STATE::HEADER) {
         const size_t need = sizeof(PackageHeader) - m_headerFilled;
         std::copy(read_ptr, read_ptr + std::min(need, lenght_ptr),
-                  reinterpret_cast<uint8_t*>(&m_header) + m_headerFilled);
+                  m_header.begin() + m_headerFilled);
 
         if (need > lenght_ptr) {
             m_offset = 0;
@@ -41,4 +41,10 @@ PackageBodyPtr PackageParser::parse(const uint8_t *buffer, const size_t lenght) 
     }
 
     return PackageBodyPtr();
+}
+
+std::string PackageParser::serialize(PackageBodyPtr package)
+{
+    PackageHeader header{package->m_data.size()};
+    return std::string(header.begin(), header.end()) + package->m_data;
 }

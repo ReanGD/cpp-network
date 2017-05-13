@@ -10,9 +10,10 @@ public:
     Connection() = delete;
     Connection(boost::asio::ip::tcp::socket socket);
 public:
-    void doRead();
-    boost::asio::ip::tcp::socket m_socket;
+    void read();
+    void write(PackageBodyPtr package);
 private:
+    boost::asio::ip::tcp::socket m_socket;
     std::array<uint8_t, 256 * 1024> m_buffer;
     PackageParser m_parser;
 };

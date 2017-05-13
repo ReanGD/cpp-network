@@ -13,6 +13,7 @@ public:
     PackageParser() = default;
 public:
     PackageBodyPtr parse(const uint8_t* buffer, const size_t lenght);
+    std::string serialize(PackageBodyPtr package);
 private:
     size_t m_offset = 0;
     STATE m_state = STATE::HEADER;

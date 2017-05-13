@@ -9,7 +9,7 @@ Connection::Connection(tcp::socket socket)
     : m_socket(std::move(socket)) {
 }
 
-void Connection::doRead() {
+void Connection::read() {
     auto self(shared_from_this());
 
     m_socket.async_read_some(boost::asio::buffer(m_buffer),
@@ -23,7 +23,22 @@ void Connection::doRead() {
                 std::string msg(package->m_data.begin(), package->m_data.end());
                 INFO(CLASS << "Message: \"" << msg << "\"");
             }
-            doRead();
+            read();
         }
+    });
+}
+
+void Connection::write(PackageBodyPtr package)
+{
+    auto self(shared_from_this());
+
+    auto data = m_parser.serialize(package);
+    m_socket.async_write_some(boost::asio::buffer(data),
+                              [this, self](boost::system::error_code ec, std::size_t length) {
+      if(ec) {
+          ERROR(CLASS << "Error write = " << BOOST_ERROR(ec));
+      } else {
+          DEBUG(CLASS << "write " << length << " bytes");
+      }
     });
 }
