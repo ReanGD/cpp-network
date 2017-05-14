@@ -10,6 +10,7 @@ public:
     Connection() = delete;
     Connection(boost::asio::ip::tcp::socket socket);
 public:
+    boost::asio::io_service& getIoService() { return m_socket.get_io_service(); }
     void read();
     void write(PackageBodyPtr package);
 private:
