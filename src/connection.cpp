@@ -15,7 +15,12 @@ void Connection::read() {
     m_socket.async_read_some(boost::asio::buffer(m_buffer),
                              [this, self](boost::system::error_code ec, std::size_t length) {
         if (ec) {
-            ERROR(CLASS << "Error read = " << BOOST_ERROR(ec));
+            // boost::asio::error::connection_reset
+            if (ec == boost::asio::error::eof) {
+                ERROR(CLASS << "Error read = the connection was closed by the peer");
+            } else {
+                ERROR(CLASS << "Error read = " << BOOST_ERROR(ec));
+            }
         } else {
             std::shared_ptr<PackageBody> package;
             DEBUG(CLASS << "read " << length << " bytes");
@@ -35,8 +40,12 @@ void Connection::write(PackageBodyPtr package)
     auto data = m_parser.serialize(package);
     m_socket.async_write_some(boost::asio::buffer(data),
                               [this, self](boost::system::error_code ec, std::size_t length) {
-      if(ec) {
-          ERROR(CLASS << "Error write = " << BOOST_ERROR(ec));
+      if (ec) {
+          if (ec == boost::asio::error::broken_pipe) {
+              ERROR(CLASS << "Error write = the connection was closed by the peer");
+          } else {
+              ERROR(CLASS << "Error write = " << BOOST_ERROR(ec));
+          }
       } else {
           DEBUG(CLASS << "write " << length << " bytes");
       }
