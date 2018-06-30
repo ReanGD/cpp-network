@@ -15,7 +15,7 @@ void Connection::read() {
     m_socket.async_read_some(boost::asio::buffer(m_buffer),
                              [this, self](boost::system::error_code ec, std::size_t length) {
         if (ec) {
-            // boost::asio::error::connection_reset
+            // boost::asio::error::connection_reset, boost::asio::error::broken_pipe, boost::asio::error::operation_aborted, boost::asio::error::shut_down
             if (ec == boost::asio::error::eof) {
                 ERROR(CLASS << "Error read = the connection was closed by the peer");
             } else {
